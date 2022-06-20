@@ -28,41 +28,48 @@ async function scrapeData(){
             })
             
         })
-        console.log(articles)
+        // console.log(articles) // um Titel und Links auszugeben beim Debuggen
         console.log("Output of article titles and links finished")
+       getTexts()
     }).catch(err => console.log(err))
 // the port we listen to
 const PORT = 8000
-
-app.listen(PORT, () => console.log('sever running on PORT ${PORT}'))
-
-getTexts()
+app.listen(PORT, () => console.log('server running on PORT ${PORT}'))
 }
 
-async function getTexts(){
-    const app2 = express()
+//---------------------------------------------------------------------------------------------
 
+async function getTexts(){
+    console.log('getTexts started')
+    //const app2 = express()
+    var j = 0
     articles.forEach(element => {
+
+       if(j == 100){return}
+       j = j +1
+       var i = 0
+        var descriptionVorlage = 'Corona-Blog-Artikel Nummer: '
+
         axios(element.urlHTML)
             .then(response => {
                 const html = response.data
                 const $ = cheerio.load(html)
-
-                $('wp-block-getwid-section__inner-content', html).each(function(){
+                
+                $('.wp-block-getwid-section__inner-content', html).each(function(){
                     //get the text
-                    const text = ''
-                    $(this).find('p').forEach(element => {
-                        text.concat(element.text())
-                    })
-                    texts.push(element.urlHTML, text)
+                    //const text = ''
+                    const text = $(this).find('p').text()
+                    const description = descriptionVorlage + i;
+                    i++
+                    texts.push(description, element.text, element.urlHTML, text)
                 })
                 console.log(texts)
-                console.log("Output of texts finished")
+                
             }).catch(err => console.log(err))
     });
 
-    const PORT = 8080
-    app2.listen(PORT, () => console.log('sever running on PORT ${PORT}'))
+    //const PORT = 8080
+    //app2.listen(PORT, () => console.log('GetTexts: sever running on PORT ${PORT}'))
 }
 
 // invoke function above 
