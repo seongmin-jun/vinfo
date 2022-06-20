@@ -1,0 +1,24 @@
+{
+  "name": "vinfo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/seongmin-jun/vinfo.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/seongmin-jun/vinfo/issues"
+  },
+  "homepage": "https://github.com/seongmin-jun/vinfo#readme",
+  "dependencies": {
+    "axios": "^0.27.2",
+    "cheerio": "^1.0.0-rc.11",
+    "express": "^4.18.1"
+  }
+}
