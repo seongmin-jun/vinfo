@@ -10,6 +10,7 @@ cheerio: used to pick out html-elements; similiar to jQuery
 
 "nodemon index.js" in the package.json file listens for changes made in the index.js file 
 
+to run a script type "npm run rubikon" or "npm run start"
 ----------------------------------------------------------------------------
 
 Fehler, die sich noch in dem index.js Script befinden:

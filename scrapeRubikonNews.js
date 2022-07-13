@@ -11,26 +11,26 @@ var texts = []
 async function scrapeData(){
     // by this function, the package is "activated"
     const app = express()
-    //const url = 'https://www.theguardian.com/uk' // use this for testing with guardian
-    const url = 'https://corona-blog.net/blog-archiv/'
+    //const url = 'https://www.theguardian.com/uk' // use this for testing with guardian test
+    const url = 'https://www.rubikon.news/artikel/suche?search_articles%5Bquery%5D=corona+impfung+covid&search_articles%5Bsort%5D=chronologisch+absteigend&start_month=3&start_year=2017&end_month=7&end_year=2022'
 
     axios(url) // returns a promise (if mistake, then response is error message)
     .then(response => {
         const html = response.data
         const $ = cheerio.load(html)
 
-        $('.listing-item', html).each(function(){ // for testing with guardian: ultp-block-title fc-item__title
+        $('.article-content', html).each(function(){ // for testing with guardian: ultp-block-title fc-item__title
             const text = $(this).text() // grabs the text of this html-element
-            const urlHTML = $(this).find('a').attr('href')
+            const urlHTML = 'https://www.rubikon.news' + $(this).find('a').attr('href')
             articles.push({
                 text,
                 urlHTML
             })
             
         })
-        // console.log(articles) // um Titel und Links auszugeben beim Debuggen
+      // console.log(articles) // um Titel und Links auszugeben beim Debuggen
         console.log("Output of article titles and links finished")
-       getTexts()
+      getTexts()
     }).catch(err => console.log(err))
 // the port we listen to
 const PORT = 8000
@@ -44,18 +44,14 @@ async function getTexts(){
     //const app2 = express()
     var j = 0
     articles.forEach(element => {
-
-       if(j == 100){return}
        j = j +1
-
-        var descriptionVorlage = 'Corona-Blog-Artikel Nummer: ' +j
-
+        var descriptionVorlage = 'Rubikon-News-Artikel Nummer: ' + j
         axios(element.urlHTML)
             .then(response => {
                 const html = response.data
                 const $ = cheerio.load(html)
                 
-                $('.wp-block-getwid-section__inner-content', html).each(function(){
+                $('.article-content', html).each(function(){
                     //get the text
                     //const text = ''
                     const text = $(this).find('p').text()
@@ -73,4 +69,3 @@ async function getTexts(){
 
 // invoke function above 
 scrapeData()
-
