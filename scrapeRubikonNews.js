@@ -41,7 +41,7 @@ app.listen(PORT, () => console.log('server running on PORT ${PORT}'))
 
 async function getTexts(){
     console.log('getTexts started')
-    //const app2 = express()
+    //const app2 = express() ok
     var j = 0
     articles.forEach(element => {
        j = j +1

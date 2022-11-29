@@ -2,32 +2,14 @@
   const axios = require('axios')
   const cheerio = require('cheerio')
   const express = require('express')
-  const domain = 'https://atlas.microsoft.com'
-  const https = require('https')
-  let instance
-  let instance2
-
-  function getAxios() {
-
-        //create axios instance
-        instance = axios.create({
-            baseURL: domain,
-            timeout: 1000000000, //optional
-            httpsAgent: new https.Agent({ keepAlive: true }),
-            headers: {'Content-Type':'application/xml'}
-        })
-
-    return instance;
-      }
  
 
   var articles = [] // the results of the scraping are stored here
+  // let urls = []
   let texts = []
   var counterArticles = 0;
 
   async function scrapeData(){
-    instance = await getAxios()
-    
 
       // by this function, the package is "activated"
       const app = express()
@@ -35,27 +17,27 @@
       const url = 'https://corona-blog.net/blog-archiv/'
 
       
-//       try { ...} catch (e) {console.log (e)}
-      
-      const response = await instance.get(url) // returns a promise (if mistake, then response is error message)
+//       try { ...} catch (e) { console.log (e) }
+      const response = await axios(url) // returns a promise (if mistake, then response is error message)
 
       const html = response.data
       const $ = cheerio.load(html)
 
-      $('.listing-item', html).each(function(){
+      $('.listing-item', html).each(function(){ // for testing with guardian: ultp-block-title fc-item__title
           const text = $(this).text() // grabs the text of this html-element
           const urlHTML = $(this).find('a').attr('href')
           articles.push({
               text,
               urlHTML
           })
+
       })
     
 
 			//     urls now has the links
      await getTexts()
 
-     console.log("counterArticles = "+  counterArticles)
+     //console.log("counterArticles = "+  counterArticles)
      //console.log(urls)
      //console.log(texts)
      
@@ -93,13 +75,16 @@
       // [1,2,3].map(el => el * el) => [1, 4, 9]
       // [{element: ...}, ...] => [Promise, Promise, Promise]
 
-      await Promise.all(articles.map(async element => { // async functions return Promise
-       
-        try{
-            // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise
+      await Promise.all(articles.map(async element => { // async functions return Promises
+        
+        
+        // console.log("counterArticles = " + counterArticles)
+
+        // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise
         // Promise.then(callback) -> callback(result des promises) 
         // const result = await Promise
-        const response = await instance.get(element.urlHTML) // returns Promise<Response>
+
+        const response = await axios(element.urlHTML) // returns Promise<Response>
         var text = "" 
         
         const html = response.data
@@ -112,26 +97,19 @@
                
             if(counter == length){
             //texts.push([element.urlHTML, text]);
-            texts.push([text]);          
+            texts.push([ text]);          
             }else{
             counter++;
-            }  // 1
-        })  
-        // counterArticles = counterArticles +1;
-        // console.log("counterArticles = " + counterArticles)
-        }
-        catch(err){
-            console.log(err.message + " 2")
-        }
-
-          
+            }  
+        })    
+        counterArticles = counterArticles +1;
+        console.log("counterArticles = " + counterArticles)
       }))
       .catch((error) => {
-        console.error(error.message + " 3");
-      })
+        console.error(error.message);
+      });
   }
 
   // invoke function above 
-  
 scrapeData()
 
